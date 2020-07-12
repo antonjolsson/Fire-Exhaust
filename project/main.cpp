@@ -72,6 +72,11 @@ float exhYOffset = 3.1f;
 float exhXOffset = 17.25f;
 bool accelerating = false;
 
+// Landing pad
+enum TvScreen {TEST_SCREEN = 1, SHADOW_MAP = 2};
+int tvScreen = TEST_SCREEN;
+GLuint testScreenTexture;
+
 ///////////////////////////////////////////////////////////////////////////////
 // Shader programs
 ///////////////////////////////////////////////////////////////////////////////
@@ -221,6 +226,8 @@ void initGL()
 	glBindTexture(GL_TEXTURE_2D, shadowMapFB.depthBuffer);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+
+	testScreenTexture = landingpadModel->m_materials[8].m_emission_texture.gl_id;
 }
 
 void drawLight(const glm::mat4& viewMatrix,
@@ -300,6 +307,18 @@ void drawScene(GLuint currentShaderProgram,
 	labhelper::render(fighterModel);
 }
 
+void setTvScreen() {
+	GLuint screenSource;
+
+	switch(tvScreen) {
+		
+		case SHADOW_MAP: screenSource = shadowMapFB.colorTextureTargets[0]; break;
+		default: case TEST_SCREEN : screenSource = testScreenTexture;
+	}
+
+	landingpadModel->m_materials[8].m_emission_texture.gl_id = screenSource;
+}
+
 void display(void)
 {
 	///////////////////////////////////////////////////////////////////////////
@@ -374,8 +393,8 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, shadowMapFB.width, shadowMapFB.height);
 	drawScene(simpleShaderProgram, lightViewMatrix, lightProjMatrix, lightViewMatrix, lightProjMatrix);
-	labhelper::Material& screen = landingpadModel->m_materials[8];
-	screen.m_emission_texture.gl_id = shadowMapFB.colorTextureTargets[0];
+	
+	setTvScreen();
 
 	if (usePolygonOffset) {
 		glDisable(GL_POLYGON_OFFSET_FILL);
@@ -566,6 +585,9 @@ void gui()
 	ImGui::SliderFloat("Exhaust x-offset", &exhXOffset, -20.0f, 20.0f);
 	ImGui::SliderFloat("Exhaust y-offset", &exhYOffset, -20.0f, 20.0f);
 	ImGui::SliderFloat("Exhaust z-offset", &exhZOffset, -2.0f, 2.0f);
+	ImGui::Text("Source of screens");
+	ImGui::RadioButton("Test screen", &tvScreen, TEST_SCREEN);
+	ImGui::RadioButton("Shadow map", &tvScreen, SHADOW_MAP);
 	// ----------------------------------------------------------
 
 	// Render the GUI.
