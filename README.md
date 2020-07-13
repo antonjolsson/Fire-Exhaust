@@ -1,6 +1,6 @@
 # Description
-Graphics programming project (and labs) from the course Computer graphics, held @ Chalmers/GU. Project constitutes implementing a particle system in the form of fire exhaust from a spaceship.  
+Implementation of a particle system in the form of fire exhaust from a spaceship.  
   
 ![Screen](screenshot.png)
 
-Based on https://gitlab.com/chalmerscg/tda362-labs-2019
+Project made for the course Computer Graphics, at Chalmers/GU. Based on https://gitlab.com/chalmerscg/tda362-labs-2019
