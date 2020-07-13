@@ -1,5 +1,5 @@
 # Description
-Implementation of a particle system in the form of fire exhaust from a spaceship.  
+Implementation of a fire exhaust from a space ship, based on a particle system.
   
 ![Screen](screenshot.png)
 
